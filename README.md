@@ -7,7 +7,7 @@ This library is an extension of the [node-jose](https://www.npmjs.com/package/no
 You can install the library from npm using the following command. This library requires Node.js 18 or above.
 
 ```bash
-npm install node-jose-aws-kms-extension
+npm install https://github.com/amzn/node-jose-aws-kms-extension.git
 ```
 
 
