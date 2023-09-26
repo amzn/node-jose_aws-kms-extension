@@ -1,3 +1,3 @@
 export interface KMSDataKeyGenerationResult {
-    data: Uint8Array | undefined;
+  data: Uint8Array | undefined;
 }

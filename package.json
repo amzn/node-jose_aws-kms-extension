@@ -1,18 +1,20 @@
 {
-  "name": "node-jose-aws-kms-extension",
-  "version": "0.1.0",
+  "name": "@amazon/node-jose_aws-kms-extension",
+  "version": "1.0.0",
   "description": "This library is an extension of node-jose library with AWS KMS support",
   "author": "lynx-tech@amazon.com",
   "license": "Apache-2.0",
-  "repository": "https://github.com/amzn/node-jose-aws-kms-extension.git",
-  "homepage": "https://github.com/amzn/node-jose-aws-kms-extension#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amzn/node-jose_aws-kms-extension.git"
+  },
+  "homepage": "https://github.com/amzn/node-jose_aws-kms-extension#readme",
   "scripts": {
     "clean": "rm -rf dist && rm -rf node_modules",
     "build": "tsc",
     "watch": "tsc -w",
     "prepublishOnly": "npm run build && npm run test",
     "test": "jest --collectCoverage --collectCoverageFrom=src/**/*.{ts,js} && npm run format && npm run fix",
-    "posttest": "generate-coverage-data --language typescript",
     "lint": "npx eslint --ext .ts src",
     "fix": "npx eslint --ext .ts src --fix",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""

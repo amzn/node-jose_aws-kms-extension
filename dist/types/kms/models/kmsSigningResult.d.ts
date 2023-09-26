@@ -1,3 +1,3 @@
 export interface KMSSigningResult {
-    mac: Uint8Array | undefined;
+  mac: Uint8Array | undefined;
 }
