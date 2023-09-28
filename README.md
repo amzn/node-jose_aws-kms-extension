@@ -7,24 +7,24 @@ This library is an extension of the [node-jose](https://www.npmjs.com/package/no
 You can install the library from npm using the following command. This library requires Node.js 18 or above.
 
 ```bash
-npm install @amazon/node-jose_aws-kms-extension
+npm install @aws-crypto/node-jose_aws-kms-extension
 ```
 
 
 ## Usage
-Import the necessary classes from `@amazon/node-jose_aws-kms-extension` module:
+Import the necessary classes from `@aws-crypto/node-jose_aws-kms-extension` module:
 
 ```ts
 import {
   KMSAsymmetricSigningKey,
   KMSSymmetricCEK,
   KMSSymmetricKey,
-} from '@amazon/node-jose_aws-kms-extension';
+} from '@aws-crypto/node-jose_aws-kms-extension';
 ```
 
 Import the main jose object.
 ```ts
-import { jose } from '@amazon/node-jose_aws-kms-extension';
+import { jose } from '@aws-crypto/node-jose_aws-kms-extension';
 ```
 
 Now, you can use all existing node-jose features as you would in the absence of this library. This library adds AWS KMS support transparently. You can use your AWS KMS keys for various encryption and signing operations using the regular node-jose functions. AWS KMS-specific algorithm names are supported.

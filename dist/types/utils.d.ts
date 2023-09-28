@@ -29,6 +29,4 @@ export declare function digestData(alg: string, data: Buffer): Promise<Buffer>;
  * @throws {KMSError}
  * For other KMS errors.
  */
-export declare function processKMSError(
-  error: unknown,
-): KMSTransientError | KMSValidationError | KMSError;
+export declare function processKMSError(error: unknown): KMSTransientError | KMSValidationError | KMSError;

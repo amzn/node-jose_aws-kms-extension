@@ -4,7 +4,7 @@ import {
   KMSAsymmetricSigningKey,
   KMSSymmetricCEK,
   KMSSymmetricKey,
-} from '@amazon/node-jose_aws-kms-extension';
+} from '@aws-crypto/node-jose_aws-kms-extension';
 import { KMSClient } from "@aws-sdk/client-kms";
 
 const kmsClient: KMSClient = new KMSClient({
