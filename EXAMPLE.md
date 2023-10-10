@@ -139,17 +139,17 @@ const decyptedContent: Promise<any> = jwe.then(function (jwe: string) {
 
 1. Prepare verification options with handlers to process jws critical headers.
 2. Prepare verification assumed key as KMSAsymmetricSigningKey object
-3. Use jose.JWE.createVerify method to verify jws payload.
+3. Use jose.JWS.createVerify method to verify jws payload.
 
 ```ts
 const verification_opts = {
   handlers: {
-    JWS_CRIT_HEADER1: function(jwe: any) { 
-      console.log(jwe.header.JWS_CRIT_HEADER1)
+    JWS_CRIT_HEADER1: function(jws: any) { 
+      console.log(jws.header.JWS_CRIT_HEADER1)
       // process JWS_CRIT_HEADER1
     },
-    JWS_CRIT_HEADER2: function(jwe: any) {
-      console.log(jwe.header.JWS_CRIT_HEADER2)
+    JWS_CRIT_HEADER2: function(jws: any) {
+      console.log(jws.header.JWS_CRIT_HEADER2)
       // process JWS_CRIT_HEADER2
     }
   },
