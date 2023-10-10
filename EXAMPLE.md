@@ -10,16 +10,10 @@ import {
 import { KMSClient } from "@aws-sdk/client-kms";
 ```
 
-### Creating KMS Client
+### Creating AWS KMS Client
 
 ```ts
-const kmsClient: KMSClient = new KMSClient({
-  region: 'REGION',
-  credentials: {
-    accessKeyId: 'EXAMPLEACCESSKEY',
-    secretAccessKey: 'examplesecretkey/K',
-  },
-});
+const kmsClient: KMSClient = new KMSClient({ region: 'REGION' });
 ```
 
 ### Signing
@@ -41,7 +35,7 @@ const signingOpts = {
 };
 
 const signatory = {
-  key: new KMSAsymmetricSigningKey('KMS_SIGNING_KEY', kmsClient),
+  key: new KMSAsymmetricSigningKey('KMS_SIGNING_KEY_ID', kmsClient),
 };
 
 const dataToSign = 'This is the data to sign';
@@ -59,7 +53,7 @@ const jws: Promise<string> = signer
 ### Encryption
 
 1. Prepare encryption options with format as `compact`, header fields and cek as KMSSymmetricCEK object.
-2. Prepare encryption recipient with reference as `false`, and key as KMSSymmetricKey object. Use same kms key to create KMSSymmetricCEK and KMSSymmetricKey.
+2. Prepare encryption recipient with reference as `false`, and key as KMSSymmetricKey object. Use same KMS key to create KMSSymmetricCEK and KMSSymmetricKey.
 3. Use jose.JWE.createEncrypt method to encrypt jws payload.
 
 ```ts
@@ -73,12 +67,12 @@ const encryptionOpts = {
     JWE_CRIT_HEADER2: 'JWE_CRIT_HEADER2_VALUE',
     crit: ['JWE_CRIT_HEADER1', 'JWE_CRIT_HEADER2'],
   },
-  cek: new KMSSymmetricCEK('KMS_ENCRYPTION_KEY', kmsClient, 'KEY_ENCRYPTION_ALGORITHM'),
+  cek: new KMSSymmetricCEK('KMS_ENCRYPTION_KEY_ID', kmsClient, 'KEY_ENCRYPTION_ALGORITHM'),
 };
 
 const encryptionRecipient = {
   reference: false,
-  key: new KMSSymmetricKey('KMS_ENCRYPTION_KEY', kmsClient),
+  key: new KMSSymmetricKey('KMS_ENCRYPTION_KEY_ID', kmsClient),
 };
 
 const encrypter = jose.JWE.createEncrypt(
@@ -118,7 +112,7 @@ const decryption_opts = {
 };
 
 const decryption_assumedKey = new KMSSymmetricKey(
-  'KMS_ENCRYPTION_KEY',
+  'KMS_ENCRYPTION_KEY_ID',
   kmsClient,
 );
 
@@ -156,7 +150,7 @@ const verification_opts = {
 };
 
 const verificationAssumedKey = new KMSAsymmetricSigningKey(
-  'KMS_SIGNING_KEY',
+  'KMS_SIGNING_KEY_ID',
   kmsClient,
 );
 
@@ -175,3 +169,5 @@ const verificationResult: Promise<any> = decyptedContent.then(function (
   });
 });
 ```
+
+#### Note: KMS_SIGNING_KEY_ID and KMS_ENCRYPTION_KEY_ID can be KMS key ID, key ARN, alias name, or alias ARN. When using an alias name, it will have prefix `alias/`. It should be key ARN or alias ARN to specify in different Amazon Web Services account.
