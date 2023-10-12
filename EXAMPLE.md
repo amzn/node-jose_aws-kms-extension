@@ -1,3 +1,5 @@
+### Importing variables from modules @aws-crypto/node-jose_aws-kms-extension and @aws-sdk/client-kms
+
 ```ts
 import {
   jose,
@@ -6,31 +8,34 @@ import {
   KMSSymmetricKey,
 } from '@aws-crypto/node-jose_aws-kms-extension';
 import { KMSClient } from "@aws-sdk/client-kms";
+```
 
-const kmsClient: KMSClient = new KMSClient({
-  region: 'us-west-1',
-  credentials: {
-    accessKeyId: 'EXAMPLEACCESSKEY',
-    secretAccessKey: 'examplesecretkey/K',
-  },
-});
+### Creating AWS KMS Client
 
-//  Signing
+```ts
+const kmsClient: KMSClient = new KMSClient({ region: 'REGION' });
+```
 
+### Signing
+
+1. Prepare signing options with format as `compact`, and header fields.
+2. Prepare signatory with key as KMSAsymmetricSigningKey object.
+3. Use jose.JWS.createSign method to sign the payload.
+
+```ts
 const signingOpts = {
   format: 'compact',
-  compact: true,
   fields: {
-    exp: 1714194877000,
-    alg: 'RSASSA_PSS_SHA_512',
-    kid: 'arn:aws:kms:eu-west-1:123456123456:alias/ExampleSigningKey',
-    crit: ['exp'],
+    alg: 'SIGNING_ALGORITHM',
+    kid: 'KMS_SIGNING_KEY_ID',
+    JWS_CRIT_HEADER1: 'JWS_CRIT_HEADER1_VALUE',
+    JWS_CRIT_HEADER2: 'JWS_CRIT_HEADER2_VALUE',
+    crit: ['JWS_CRIT_HEADER1', 'JWS_CRIT_HEADER2'],
   },
 };
 
 const signatory = {
-  reference: false,
-  key: new KMSAsymmetricSigningKey('alias/ExampleSigningKey', kmsClient),
+  key: new KMSAsymmetricSigningKey('KMS_SIGNING_KEY_ID', kmsClient),
 };
 
 const dataToSign = 'This is the data to sign';
@@ -43,22 +48,31 @@ const jws: Promise<string> = signer
     return result;
   });
 
-// Encryption
+  ```
 
+### Encryption
+
+1. Prepare encryption options with format as `compact`, header fields and cek as KMSSymmetricCEK object.
+2. Prepare encryption recipient with reference as `false`, and key as KMSSymmetricKey object. Use same KMS key to create KMSSymmetricCEK and KMSSymmetricKey.
+3. Use jose.JWE.createEncrypt method to encrypt jws payload.
+
+```ts
 const encryptionOpts = {
   format: 'compact',
-  contentAlg: 'A256GCM',
   fields: {
-    kid: 'arn:aws:kms:eu-west-1:123456123456:alias/ExampleEncryptionKey',
-    alg: 'SYMMETRIC_DEFAULT',
-    enc: 'A256GCM',
+    kid: 'ENCRYPTION_KMS_KEY_ID',
+    alg: 'KEY_ENCRYPTION_ALGORITHM',
+    enc: 'CONTENT_ENCRYPTION_ALGORITHM',
+    JWE_CRIT_HEADER1: 'JWE_CRIT_HEADER1_VALUE',
+    JWE_CRIT_HEADER2: 'JWE_CRIT_HEADER2_VALUE',
+    crit: ['JWE_CRIT_HEADER1', 'JWE_CRIT_HEADER2'],
   },
-  cek: new KMSSymmetricCEK('alias/ExampleEncryptionKey', kmsClient, 'AES_256'),
+  cek: new KMSSymmetricCEK('KMS_ENCRYPTION_KEY_ID', kmsClient, 'KEY_ENCRYPTION_ALGORITHM'),
 };
 
 const encryptionRecipient = {
   reference: false,
-  key: new KMSSymmetricKey('alias/ExampleEncryptionKey', kmsClient),
+  key: new KMSSymmetricKey('KMS_ENCRYPTION_KEY_ID', kmsClient),
 };
 
 const encrypter = jose.JWE.createEncrypt(
@@ -75,16 +89,30 @@ const jwe: Promise<string> = jws.then(function (jws: string) {
     });
 });
 
-//  Decryption
+```
 
+###  Decryption
+
+1. Prepare decryption options with handlers to process jwe critical headers.
+2. Preare decryption assumed key as KMSSymmetricKey object
+3. Use jose.JWE.createDecrypt method to decrypt jwe payload.
+
+```ts
 const decryption_opts = {
   handlers: {
-    exp: true,
+    JWE_CRIT_HEADER1: function(jwe: any) { 
+      console.log(jwe.header.JWE_CRIT_HEADER1)
+      // process JWE_CRIT_HEADER1
+    },
+    JWE_CRIT_HEADER2: function(jwe: any) {
+      console.log(jwe.header.JWE_CRIT_HEADER2)
+      // process JWE_CRIT_HEADER2
+    }
   },
 };
 
 const decryption_assumedKey = new KMSSymmetricKey(
-  'alias/ExampleEncryptionKey',
+  'KMS_ENCRYPTION_KEY_ID',
   kmsClient,
 );
 
@@ -99,17 +127,36 @@ const decyptedContent: Promise<any> = jwe.then(function (jwe: string) {
     return result;
   });
 });
+```
 
-//  Verification
+###  Verification
+
+1. Prepare verification options with handlers to process jws critical headers.
+2. Prepare verification assumed key as KMSAsymmetricSigningKey object
+3. Use jose.JWS.createVerify method to verify jws payload.
+
+```ts
+const verification_opts = {
+  handlers: {
+    JWS_CRIT_HEADER1: function(jws: any) { 
+      console.log(jws.header.JWS_CRIT_HEADER1)
+      // process JWS_CRIT_HEADER1
+    },
+    JWS_CRIT_HEADER2: function(jws: any) {
+      console.log(jws.header.JWS_CRIT_HEADER2)
+      // process JWS_CRIT_HEADER2
+    }
+  },
+};
 
 const verificationAssumedKey = new KMSAsymmetricSigningKey(
-  'alias/ExampleSigningKey',
+  'KMS_SIGNING_KEY_ID',
   kmsClient,
 );
 
 const verifier = jose.JWS.createVerify(
   verificationAssumedKey,
-  decryption_opts,
+  verification_opts,
 );
 const verificationResult: Promise<any> = decyptedContent.then(function (
   decryptedContent: any,
@@ -122,3 +169,5 @@ const verificationResult: Promise<any> = decyptedContent.then(function (
   });
 });
 ```
+
+#### Note: KMS_SIGNING_KEY_ID and KMS_ENCRYPTION_KEY_ID can be KMS key ID, key ARN, alias name, or alias ARN. When using an alias name, it will have prefix `alias/`. It should be key ARN or alias ARN to specify in different Amazon Web Services account.
