@@ -50,6 +50,7 @@ export class KMSSymmetricCEK {
       };
       return dataKeyGenerationResult;
     } catch (error) {
+      console.error('Error while generating data key from KMS:', error);
       return Promise.reject(processKMSError(error));
     }
   }

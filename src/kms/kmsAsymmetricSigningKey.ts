@@ -59,6 +59,7 @@ export class KMSAsymmetricSigningKey {
       };
       return signingResult;
     } catch (error) {
+      console.error('Error while signing from KMS:', error);
       return Promise.reject(processKMSError(error));
     }
   }
@@ -94,6 +95,7 @@ export class KMSAsymmetricSigningKey {
       };
       return verificationResult;
     } catch (error) {
+      console.error('Error while verifying from KMS:', error);
       return Promise.reject(processKMSError(error));
     }
   }

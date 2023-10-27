@@ -63,6 +63,7 @@ export class KMSSymmetricKey {
       const response: DecryptCommandOutput = await this.kmsClient.send(command);
       return response.Plaintext;
     } catch (error) {
+      console.error('Error while decrypting from KMS:', error);
       return Promise.reject(processKMSError(error));
     }
   }
