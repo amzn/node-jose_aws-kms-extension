@@ -128,3 +128,21 @@ function isKMSValidationError(error: unknown) {
   }
   return false;
 }
+
+/**
+ * Maps the standard algorithm to the algorithm used by AWS KMS.
+ * https://datatracker.ietf.org/doc/html/rfc7518#section-4.1
+ *
+ * @param algorithm - The algorithm to map.
+ * @returns The algorithm used by AWS KMS.
+ */
+export function standardAlgorithmMap(algorithm: string): string {
+  switch (algorithm) {
+    case 'RSA-OAEP':
+      return 'RSAES_OAEP_SHA_1';
+    case 'RSA-OAEP-256':
+      return 'RSAES_OAEP_SHA_256';
+    default:
+      return algorithm;
+  }
+}

@@ -4,7 +4,11 @@ import {
   DecryptCommandInput,
   DecryptCommandOutput,
 } from '@aws-sdk/client-kms';
-import { validateKeyFormat, processKMSError } from '../utils';
+import {
+  validateKeyFormat,
+  processKMSError,
+  standardAlgorithmMap,
+} from '../utils';
 import { KMSDataKeyGenerationResult } from './models/kmsDataKeyGenerationResult';
 
 /**
@@ -53,10 +57,11 @@ export class KMSSymmetricKey {
     encryptionAlgorithm: string,
     wrappedKey: Uint8Array,
   ): Promise<Uint8Array | undefined> {
+    const mappedAlgorithm = standardAlgorithmMap(encryptionAlgorithm);
     const input: DecryptCommandInput = {
       CiphertextBlob: wrappedKey,
       KeyId: this.keyId,
-      EncryptionAlgorithm: encryptionAlgorithm,
+      EncryptionAlgorithm: mappedAlgorithm,
     };
     const command = new DecryptCommand(input);
     try {
