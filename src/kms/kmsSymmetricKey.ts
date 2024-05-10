@@ -7,7 +7,7 @@ import {
 import {
   validateKeyFormat,
   processKMSError,
-  standardAlgorithmMap,
+  mapToAwsKmsAlgorithm,
 } from '../utils';
 import { KMSDataKeyGenerationResult } from './models/kmsDataKeyGenerationResult';
 
@@ -57,7 +57,7 @@ export class KMSSymmetricKey {
     encryptionAlgorithm: string,
     wrappedKey: Uint8Array,
   ): Promise<Uint8Array | undefined> {
-    const mappedAlgorithm = standardAlgorithmMap(encryptionAlgorithm);
+    const mappedAlgorithm = mapToAwsKmsAlgorithm(encryptionAlgorithm);
     const input: DecryptCommandInput = {
       CiphertextBlob: wrappedKey,
       KeyId: this.keyId,

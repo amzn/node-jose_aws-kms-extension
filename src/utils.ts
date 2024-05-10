@@ -136,13 +136,11 @@ function isKMSValidationError(error: unknown) {
  * @param algorithm - The algorithm to map.
  * @returns The algorithm used by AWS KMS.
  */
-export function standardAlgorithmMap(algorithm: string): string {
-  switch (algorithm) {
-    case 'RSA-OAEP':
-      return 'RSAES_OAEP_SHA_1';
-    case 'RSA-OAEP-256':
-      return 'RSAES_OAEP_SHA_256';
-    default:
-      return algorithm;
-  }
+export function mapToAwsKmsAlgorithm(algorithm: string): string {
+  const algorithmMap: { [key: string]: string } = {
+    'RSA-OAEP': 'RSAES_OAEP_SHA_1',
+    'RSA-OAEP-256': 'RSAES_OAEP_SHA_256',
+  };
+
+  return algorithmMap[algorithm] || algorithm;
 }
