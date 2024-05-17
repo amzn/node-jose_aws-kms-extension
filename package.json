@@ -1,6 +1,6 @@
 {
   "name": "@aws-crypto/node-jose_aws-kms-extension",
-  "version": "2.1.2",
+  "version": "2.1.0",
   "description": "This library is an extension of node-jose library with AWS KMS support",
   "author": "lynx-tech@amazon.com",
   "license": "Apache-2.0",
